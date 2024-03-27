@@ -1,0 +1,29 @@
+name: Python app CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to dockerhub
+      uses: docker/login-actions@v1
+      with:
+        username: ${{secrets.DOCKER_USERNAME}}
+        password: ${{secrets.DOCKER_PASSWORD}}
+
+    - name: Docker build
+      run: docker build -t dhanalucky2308/python-image:latest
+
+    - name: Push image
+      run: docker push dhanalucky2308/python-image:latest
