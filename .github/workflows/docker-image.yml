@@ -23,7 +23,7 @@ jobs:
         password: ${{secrets.DOCKER_PASSWORD}}
 
     - name: Docker build
-      run: docker build -t dhanalucky2308/python-image:latest
+      run: docker build -t dhanalucky2308/python-image:latest .
 
     - name: Push image
       run: docker push dhanalucky2308/python-image:latest
