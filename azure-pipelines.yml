@@ -9,8 +9,8 @@ jobs:
     steps:
     - script: |
         #!/bin/bash        
-        echo "##vso[task.setvariable variable=myvar1;isOutput=true]True"
-        echo "##vso[task.setvariable variable=myvar2;isOutput=true]hello"
+        echo "##vso[task.setvariable variable=myvar1;isOutput=true]5"
+        echo "##vso[task.setvariable variable=myvar2;isOutput=true]6"
       name: setvarStep
   # Map the variable into job B
   - job: B
