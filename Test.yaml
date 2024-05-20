@@ -20,5 +20,6 @@ jobs:
     myVarFromJob1: $[ dependencies.Job1.outputs['SetVariable.myVar'] ]
   steps:
   - script: |
+      echo "output from job 1 ${{ variables.myVar }}"
       echo "Variable from Job 1: $(myVarFromJob1)"
       echo "Job 2 completed"
