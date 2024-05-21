@@ -6,6 +6,8 @@ pool:
 jobs:
   # Set an output variable from job A
   - job: A
+    variables:
+      new_val:
     steps:
     - script: |
         #!/bin/bash        
