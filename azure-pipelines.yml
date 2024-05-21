@@ -11,6 +11,8 @@ jobs:
         #!/bin/bash        
         echo "##vso[task.setvariable variable=myvar1;isOutput=true]10"
         echo "##vso[task.setvariable variable=myvar2;isOutput=true]6"
+        new_val=$((myvar1+1))
+        echo $(new_val)
       name: setvarStep
   # Map the variable into job B
   - job: B
