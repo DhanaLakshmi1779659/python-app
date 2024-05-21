@@ -3,31 +3,26 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
-jobs:
-  # Set an output variable from job A
-  - job: A
 
-    steps:
-    - script: |
-        #!/bin/bash        
-        echo "##vso[task.setvariable variable=myvar1;isOutput=true]10"
-        echo "##vso[task.setvariable variable=myvar2;isOutput=true]6"
+variables:
+  var1: 10
+  var2: 20
 
-      name: setvarStep
-  # Map the variable into job B
-  - job: B
-    dependsOn: A
-    variables:
-      new_val:
-      myVarFromJobA: $[ dependencies.A.outputs['setvarStep.myvar1'] ]  
-      myVarFromJobA1: $[ dependencies.A.outputs['setvarStep.myvar2'] ]  
-    steps:
-    - script: echo $(myVarFromJobA)
-      name: echovar
-    - script: echo $(myVarFromJobA1)
-      name: echovar1
-    - script: |
-        #!/bin/bash 
-        new_val=$((myVarFromJobA1+1))
-        echo $(new_val)
-      name: echovar2
+steps:
+- script: |
+    echo "Variable 1: $(var1)"
+    echo "Variable 2: $(var2)"
+    
+    # Add the two variables
+    var3=$(( $(var1) + $(var2) ))
+    
+    # Print the result
+    echo "The result of addition is: $var3"
+    
+    # Set the result as an output variable
+    echo "##vso[task.setvariable variable=var3]$var3"
+  displayName: 'Add Variables and Print Result'
+
+- script: |
+    echo "The result stored in var3 is: $(var3)"
+  displayName: 'Print the Third Variable'
