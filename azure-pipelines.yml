@@ -18,17 +18,22 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      pwd
-      ls
-      LAST_LINE=1.0.0
-      echo "last_line : $LAST_LINE"
-      Updated_line=$((LAST_LINE + 1))
-      echo "updated version: $Updated_line "
-      echo "##vso[task.setvariable variable=last_line]$LAST_LINE"
+      
+      current_version=1.0.0
+      increment=0.0.1
+      IFS='.' read -r -a current_parts <<< "$current_version"
+      IFS='.' read -r -a increment_parts <<< "$increment"
+
+      new_major=$((current_parts[0]+increment_parts[0]))
+      new_minor=$((current_parts[1]+increment_parts[1]))
+      new_patch=$((current_parts[2]+increment_parts[2]))
+      new_Version="$new_major.$new_minor.$new_patch"
+      echo "New version : $new_Version"
+      echo "##vso[task.setvariable variable=build_Version]$new_Version"
 
     
 
 - script: |
-    echo " Updated lastline : $(last_line)"
+    echo " Final updated version : $(build_Version)"
 
 
