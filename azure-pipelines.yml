@@ -1,3 +1,4 @@
+
 trigger:
 - main
 
@@ -9,20 +10,23 @@ variables:
   var2: 20
 
 steps:
-- script: |
-    echo "Variable 1: $(var1)"
-    echo "Variable 2: $(var2)"
+- checkout: self
+
+- task: Bash@3
+  name: Fetch_Version
+  displayName: 'Build version'
+  inputs:
+    targetType: 'inline'
+    script: |
+      pwd
+      ls
+      LAST_LINE=1.0.0
+      echo "last_line : $LAST_LINE"
+      echo "##vso[task.setvariable variable=last_line]$LAST_LINE"
+      echo "last_line : $(last_line)" 
     
-    # Add the two variables
-    var3=$(( $(var1) + $(var2) ))
-    
-    # Print the result
-    echo "The result of addition is: $var3"
-    
-    # Set the result as an output variable
-    echo "##vso[task.setvariable variable=var3]$var3"
-  displayName: 'Add Variables and Print Result'
 
 - script: |
-    echo "The result stored in var3 is: $(var3)"
-  displayName: 'Print the Third Variable'
+    echo "lastline : $(last_line)"
+
+
