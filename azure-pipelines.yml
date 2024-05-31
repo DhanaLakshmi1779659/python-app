@@ -20,8 +20,8 @@ steps:
     script: |
       
       ls
-      current_Version=$(tail -n 1 build_version.txt)
-      echo "current_Version: $current_Version"
+      current_version=$(tail -n 1 build_version.txt)
+      echo "current_Version: $current_version"
       increment=0.0.1
       IFS='.' read -r -a current_parts <<< "$current_version"
       IFS='.' read -r -a increment_parts <<< "$increment"
