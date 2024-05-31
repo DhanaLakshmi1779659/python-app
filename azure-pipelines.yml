@@ -22,7 +22,7 @@ steps:
       ls
       LAST_LINE=1.0.0
       echo "last_line : $LAST_LINE"
-      Updated_line=$((LAST_LINE+0.0.1))
+      Updated_line=$((LAST_LINE+1))
       echo "updated version: $Updated_line "
       echo "##vso[task.setvariable variable=last_line]$LAST_LINE"
 
