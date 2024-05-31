@@ -23,10 +23,10 @@ steps:
       LAST_LINE=1.0.0
       echo "last_line : $LAST_LINE"
       echo "##vso[task.setvariable variable=last_line]$LAST_LINE"
-      echo "last_line : $(last_line)" 
+      echo "last_line-2 : $last_line" 
     
 
 - script: |
-    echo "lastline : $(last_line)"
+    echo " Updated lastline : $(last_line)"
 
 
