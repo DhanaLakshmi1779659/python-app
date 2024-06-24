@@ -1,0 +1,48 @@
+trigger: none
+
+schedules:
+- cron: "0 * * * *" # This cron expression schedules the pipeline to run at the top of every hour
+  displayName: Hourly schedule
+  branches:
+    include:
+    - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  organization: 'your_organization'  # Replace with your Azure DevOps organization name
+  project: 'your_project'  # Replace with your Azure DevOps project name
+  pipelineId: 'your_primary_pipeline_id'  # Replace with the ID of the primary pipeline you want to trigger
+  pat: '$(YOUR_PAT)'  # Use a secure file to store your PAT token
+
+steps:
+- script: |
+    echo "Triggering primary pipeline via API endpoint..."
+    
+    # Define the payload
+    PAYLOAD='{
+      "resources": {},
+      "templateParameters": {
+        "param1": "value1",
+        "param2": "value2"
+      }
+    }'
+
+    # Make the API call to trigger the primary pipeline
+    RESPONSE=$(curl -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Basic $(echo -n ":$PAT" | base64)" \
+      -d "$PAYLOAD" \
+      https://dev.azure.com/$(organization)/$(project)/_apis/pipelines/$(pipelineId)/runs?api-version=6.0)
+    
+    HTTP_STATUS=$(echo "$RESPONSE" | jq -r '.statusCode')
+    RESULT=$(echo "$RESPONSE" | jq -r '.status')
+
+    if [ "$HTTP_STATUS" != "200" ]; then
+      echo "API call failed with status code: $HTTP_STATUS"
+      exit 1
+    fi
+
+    echo "Primary pipeline triggered successfully."
+  displayName: 'Trigger Primary Pipeline'
