@@ -1,41 +1,31 @@
+trigger: none
 
-trigger:
-- main
+schedules:
+- cron: "0 * * * *" # This cron expression schedules the pipeline to run at the top of every hour
+  displayName: Hourly schedule
+  branches:
+    include:
+    - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  var1: 10
-  var2: 20
+  apiEndpoint: 'https://example.com/api/trigger'  # Replace with your actual endpoint
+  payload: '{"param1": "value1", "param2": "value2"}'  # Replace with your actual payload
 
 steps:
-- checkout: self
-
-- task: Bash@3
-  name: Fetch_Version
-  displayName: 'Build version'
+- task: InvokeRESTAPI@1
+  displayName: 'Trigger Resource Provisioning Pipeline'
   inputs:
-    targetType: 'inline'
-    script: |
-      
-      ls
-      current_version=$(tail -n 1 build_version.txt)
-      echo "current_Version: $current_version"
-      increment=0.0.1
-      IFS='.' read -r -a current_parts <<< "$current_version"
-      IFS='.' read -r -a increment_parts <<< "$increment"
-
-      new_major=$((current_parts[0]+increment_parts[0]))
-      new_minor=$((current_parts[1]+increment_parts[1]))
-      new_patch=$((current_parts[2]+increment_parts[2]))
-      new_Version="$new_major.$new_minor.$new_patch"
-      echo "New version : $new_Version"
-      echo "##vso[task.setvariable variable=build_Version]$new_Version"
-
-    
-
-- script: |
-    echo " Final updated version : $(build_Version)"
+    method: 'POST'
+    urlSuffix: ''
+    serviceConnection: 'your_service_connection'  # Replace with the name of your service connection
+    headers: |
+      Content-Type: application/json
+      Authorization: Basic $(echo -n ":$(PAT_TOKEN)" | base64)
+    body: '$(payload)'
+  env:
+    API_ENDPOINT: $(apiEndpoint)
 
 
