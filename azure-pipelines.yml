@@ -15,7 +15,7 @@ variables:
   payload: '{"param1": "value1", "param2": "value2"}'  # Replace with your actual payload
 
 steps:
-- task: InvokeRESTAPI@1
+- task: InvokeRESTAPI@0
   displayName: 'Trigger Resource Provisioning Pipeline'
   inputs:
     method: 'POST'
