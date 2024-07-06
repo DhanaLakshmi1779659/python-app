@@ -1,49 +1,36 @@
-trigger: none
 
-schedules:
-- cron: "0 * * * *" # This cron expression schedules the pipeline to run at the top of every hour
-  displayName: Hourly schedule
-  branches:
-    include:
-    - main
+trigger: none
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  organization: 'your_organization'  # Replace with your Azure DevOps organization name
-  project: 'your_project'  # Replace with your Azure DevOps project name
-  pat: '$(YOUR_PAT)'  # Use a secure variable to store your PAT token
+  azureDevOpsOrg: 'your_organization'
+  projectName: 'your_project'
+  pipelineId: 'target_pipeline_id' # ID of the pipeline you want to monitor
+  sleepTime: 300 # Time to sleep in seconds (5 minutes)
 
 steps:
 - script: |
-    echo "Calling endpoint to trigger resource provisioning pipeline..."
+    echo "Checking the status of the pipeline every 5 minutes..."
+    while true; do
+      echo "Fetching the latest run status of pipeline ID: $(pipelineId)"
+      response=$(curl -s \
+        -u ":$(System.AccessToken)" \
+        -H "Content-Type: application/json" \
+        "https://dev.azure.com/$(azureDevOpsOrg)/$(projectName)/_apis/pipelines/$(pipelineId)/runs?api-version=6.0")
 
-    # Define the API endpoint and payload
-    API_ENDPOINT="https://example.com/api/trigger"  # Replace with your actual endpoint
-    PAYLOAD='{
-      "resourceType": "your_resource_type",
-      "resourceName": "your_resource_name",
-      "parameters": {
-        "param1": "value1",
-        "param2": "value2"
-      }
-    }'
+      latestRunStatus=$(echo $response | jq -r '.value[0].state')
+      echo "Latest run status: $latestRunStatus"
 
-    # Make the API call to trigger the resource provisioning pipeline
-    RESPONSE=$(curl -X POST \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Basic $(echo -n ":$pat" | base64)" \
-      -d "$PAYLOAD" \
-      $API_ENDPOINT)
-
-    HTTP_STATUS=$(echo "$RESPONSE" | jq -r '.statusCode')
-    RESULT=$(echo "$RESPONSE" | jq -r '.status')
-
-    if [ "$HTTP_STATUS" != "200" ]; then
-      echo "API call failed with status code: $HTTP_STATUS"
-      exit 1
-    fi
-
-    echo "Resource provisioning pipeline triggered successfully."
-  displayName: 'Trigger Resource Provisioning Pipeline'
+      if [[ "$latestRunStatus" == "completed" ]]; then
+        echo "The pipeline run has completed."
+        break
+      else
+        echo "The pipeline run is still in progress. Sleeping for $(sleepTime) seconds."
+        sleep $(sleepTime)
+      fi
+    done
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  displayName: "Check Pipeline Status"
