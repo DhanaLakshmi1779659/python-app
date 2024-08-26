@@ -17,7 +17,7 @@ jobs:
 - job: B
   dependsOn: A 
   variables:
-    resource: $[ dependencies.A.outputs['jobA.resource'] ]
+    resource: $[ dependencies.A.outputs['resource'] ]
   steps:
   - script: |
       echo "Resource type is $(resource)"
@@ -26,6 +26,7 @@ jobs:
     name: "step_1"
     condition: eq(variables['resource'], 'Kubernetes_Cluster')
   - script: |
+      echo "Resource type is $(resource)"
       echo "Step 2"
     displayName: "Step 2"
     name: "step_2"
