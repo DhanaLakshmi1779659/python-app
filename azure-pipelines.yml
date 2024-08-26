@@ -8,13 +8,14 @@ variables:
   resource_type: Kubernetes_Cluster
 
 jobs:
-- job: MyJob
+- job: A
   steps:
   - script: echo "Resource type is $(resource_type)"
     displayName: "Print Resource Type"
   # Your other steps here
 
 - job: B
+  dependsOn: A 
   condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
   steps:
   - script: |
