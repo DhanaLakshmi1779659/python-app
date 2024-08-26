@@ -16,7 +16,7 @@ jobs:
 
 - job: B
   dependsOn: A 
-  condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
+  condition: ne(variables['resource_type'], 'Kubernetes_Cluster')
   steps:
   - script: |
       echo "Resource type is $(resource_type)"
