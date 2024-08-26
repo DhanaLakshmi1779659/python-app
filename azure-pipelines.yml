@@ -19,6 +19,7 @@ jobs:
   condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
   steps:
   - script: |
+      echo "Resource type is $(resource_type)"
       echo "Step 2.1"
     displayName: "Step 2.1"
   - script: |
