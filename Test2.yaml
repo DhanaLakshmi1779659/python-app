@@ -1,0 +1,22 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: Job1
+  displayName: 'Job 1: Set Variable'
+  steps:
+  - script: |
+      echo "##vso[task.setVariable variable=resource_type;isOutput=true]Kubernetes_Cluster"
+    name: SetVariableStep
+
+- job: Job2
+  displayName: 'Job 2: Use Variable'
+  dependsOn: Job1
+  variables:
+    resourceTypeFromJob1: $[ dependencies.Job1.outputs['SetVariableStep.resource_type'] ]
+  steps:
+  - script: |
+      echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
