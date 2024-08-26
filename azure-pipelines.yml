@@ -12,26 +12,26 @@ jobs:
   steps:
   - script: |
       resource_type="Kubernetes_Cluster"
-      echo "##vso[task.setvariable variable=resource_type;isOutput=true;]$resource_type"
-      echo "variable value is $(resource_type)"
-      echo "Resource type is $(resource_type)"
+      echo "##vso[task.setvariable variable=resource;isOutput=true;]$resource_type"
+      echo "variable value is $(resource)"
+      echo "Resource type is $(resource)"
     displayName: "Print Resource Type"
   # Your other steps here
 
 - job: B
   dependsOn: A 
   variables:
-    resource_type: $[ dependencies.A.outputs['setVariable.resource_type'] ]
+    resource: $[ dependencies.A.outputs['setVariable.resource'] ]
   steps:
   - script: |
       echo "Resource type is $(resource_type)"
       echo "Step 1"
     displayName: "Step 1"
     name: "step_1"
-    condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
+    condition: eq(variables['resource'], 'Kubernetes_Cluster')
   - script: |
       echo "Step 2"
     displayName: "Step 2"
     name: "step_2"
-    condition: ne(variables['resource_type'], 'Kubernetes_Cluster')
+    condition: ne(variables['resource'], 'Kubernetes_Cluster')
 
