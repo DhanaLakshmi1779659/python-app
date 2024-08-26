@@ -18,15 +18,20 @@ jobs:
   displayName: 'Job 2: Use Variable'
   dependsOn: Job1
   variables:
-    resourceTypeFromJob1: $[ dependencies.Job1.outputs['SetVariableStep.resource_type'] ]
+    resourceType: $[ dependencies.Job1.outputs['SetVariableStep.resource_type'] ]
   steps:
   - script: |
-      echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
+      echo "The value of resource_type from Job 1 is: $(resourceType)"
     displayName: "Step 1"
     name: "step_1"
-    condition: eq(variables['resourceTypeFromJob1'], 'Kubernetes_Cluster')
+    condition: eq(variables['resourceType'], 'Kubernetes_Cluster')
   - script: |
-      echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
+      echo "The value of resource_type from Job 1 is: $(resourceType)"
     displayName: "Step 2"
     name: "step_2"
-    condition: ne(variables['resourceTypeFromJob1'], 'Kubernetes_Cluster')  
+    condition: ne(variables['resourceType'], 'Kubernetes_Cluster')
+  - script: |
+      echo "The value of resource_type from Job 1 is: $(resourceType)"
+    displayName: "Step 3"
+    name: "step_3"
+    condition: ne(variables['resourceType'], 'Kubernetes_Cluster')      
