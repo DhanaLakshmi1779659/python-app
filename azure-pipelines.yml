@@ -22,8 +22,8 @@ jobs:
   steps:
   - script: |
       echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
-    displayName: "Step 2"
-    name: "step_2"
+    displayName: "Step 1"
+    name: "step_1"
     condition: eq(variables['resourceTypeFromJob1'], 'Kubernetes_Cluster')
   - script: |
       echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
