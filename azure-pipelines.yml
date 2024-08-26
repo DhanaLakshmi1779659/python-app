@@ -16,13 +16,16 @@ jobs:
 
 - job: B
   dependsOn: A 
-  condition: ne(variables['resource_type'], 'Kubernetes_Cluster')
   steps:
   - script: |
       echo "Resource type is $(resource_type)"
-      echo "Step 2.1"
-    displayName: "Step 2.1"
+      echo "Step 1"
+    displayName: "Step 1"
+    name: "step_1"
+    condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
   - script: |
-      echo "Step 2.2"
-    displayName: "Step 2.2"
+      echo "Step 2"
+    displayName: "Step 2"
+    name: "step_2"
+    condition: ne(variables['resource_type'], 'Kubernetes_Cluster')
 
