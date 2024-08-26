@@ -1,46 +1,26 @@
 trigger: none
 
-schedules:
-- cron: "0 * * * *" # This cron expression schedules the pipeline to run at the top of every hour
-  displayName: Hourly schedule
-  branches:
-    include:
-    - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  apiEndpoint: 'https://example.com/api/trigger'  # Replace with your actual endpoint
-  payload: '{"param1": "value1", "param2": "value2"}'  # Replace with your actual payload
+  resource_type: Kubernetes_Cluster
 
-steps:
-# Invoke REST API v1
-# Invoke a REST API as a part of your pipeline.
-- task: InvokeRESTAPI@1
-  inputs:
-    connectionType: 'connectedServiceName' # 'connectedServiceName' | 'connectedServiceNameARM'. Alias: connectedServiceNameSelector. Required. Connection type. Default: connectedServiceName.
-    serviceConnection: # string. Alias: connectedServiceName | genericService. Required when connectedServiceNameSelector = connectedServiceName. Generic service connection. 
-    #azureServiceConnection: # string. Alias: connectedServiceNameARM | azureSubscription. Required when connectedServiceNameSelector = connectedServiceNameARM. Azure subscription. 
-    method: 'POST' # 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'PATCH'. Required. Method. Default: POST.
-    #headers: # string. Headers. 
-    #body: # string. Optional. Use when method != GET && method != HEAD. Body. 
-    #urlSuffix: # string. URL suffix and parameters. 
-  # Advanced
-    waitForCompletion: 'false' # 'true' | 'false'. Required. Completion event. Default: false.
-    #successCriteria: # string. Optional. Use when waitForCompletion = false. Success criteria.
+jobs:
+- job: MyJob
+  steps:
+  - script: echo "Resource type is $(resource_type)"
+    displayName: "Print Resource Type"
+  # Your other steps here
 
-# - task: InvokeRESTAPI@0
-#   displayName: 'Trigger Resource Provisioning Pipeline'
-#   inputs:
-#     method: 'POST'
-#     urlSuffix: ''
-#     serviceConnection: 'your_service_connection'  # Replace with the name of your service connection
-#     headers: |
-#       Content-Type: application/json
-#       Authorization: Basic $(echo -n ":$(PAT_TOKEN)" | base64)
-#     body: '$(payload)'
-#   env:
-#     API_ENDPOINT: $(apiEndpoint)
-
+- job: B
+  condition: eq(variables['resource_type'], 'Kubernetes_Cluster')
+  steps:
+  - script: |
+      echo "Step 2.1"
+    displayName: "Step 2.1"
+  - script: |
+      echo "Step 2.2"
+    displayName: "Step 2.2"
 
