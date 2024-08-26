@@ -17,7 +17,7 @@ jobs:
 - job: B
   dependsOn: A 
   variables:
-    resource: $[ dependencies.A.outputs['resource'] ]
+    resource: $[ dependencies.A.outputs['setVariable.resource'] ]
   steps:
   - script: |
       echo "Resource type is $(resource)"
