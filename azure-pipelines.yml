@@ -9,7 +9,9 @@ jobs:
   displayName: 'Job 1: Set Variable'
   steps:
   - script: |
-      echo "##vso[task.setVariable variable=resource_type;isOutput=true]Kubernetes_Cluster"
+      resource="Kubernetes_Cluster"
+      echo "resource = $resource"
+      echo "##vso[task.setVariable variable=resource_type;isOutput=true]$resource"
     name: SetVariableStep
 
 - job: Job2
