@@ -1,33 +1,24 @@
-trigger: none
+trigger:
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
-#variables:
-#  resource_type: Kubernetes_Cluster
+
 jobs:
-- job: A
+- job: Job1
+  displayName: 'Job 1: Set Variable'
   steps:
   - script: |
       resource="Kubernetes_Cluster"
       echo "resource = $resource"
       echo "##vso[task.setVariable variable=resource_type;isOutput=true]$resource"
-    displayName: "Print Resource Type"
-    name: jobA
-  # Your other steps here
-- job: B
-  dependsOn: A 
+    name: SetVariableStep
+
+- job: Job2
+  displayName: 'Job 2: Use Variable'
+  dependsOn: Job1
   variables:
-    resource: $[ dependencies.A.outputs['setVariable.resource_type'] ]
+    resourceTypeFromJob1: $[ dependencies.Job1.outputs['SetVariableStep.resource_type'] ]
   steps:
   - script: |
-      echo "Resource type is $(resource)"
-      echo "Step 1"
-    displayName: "Step 1"
-    name: "step_1"
-    condition: eq(variables['resource'], 'Kubernetes_Cluster')
-  - script: |
-      echo "Resource type is $(resource)"
-      echo "Step 2"
-    displayName: "Step 2"
-    name: "step_2"
-    condition: ne(variables['resource'], 'Kubernetes_Cluster')
+      echo "The value of resource_type from Job 1 is: $(resourceTypeFromJob1)"
