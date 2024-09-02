@@ -1,18 +1,26 @@
-stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    steps:
-    - script: |
-        echo "##vso[task.setvariable variable=myVar;isOutput=true]HelloWorld"
-      name: SetVarStep
+trigger:
+- main
 
-- stage: Deploy
-  dependsOn: Build
+stages:
+- stage: Stage1
   jobs:
-  - job: DeployJob
-    variables:
-      myVarFromBuild: $[ dependencies.Build.outputs['BuildJob.SetVarStep.myVar'] ]
+  - job: JobA
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
     - script: |
-        echo "The value of the variable is: $(myVarFromBuild)"
+        echo "##vso[task.setvariable variable=myVar;isOutput=true]Hello from Stage1 JobA"
+      name: SetOutputVar
+
+- stage: Stage2
+  dependsOn: Stage1
+  jobs:
+  - job: JobB
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      myVarFromStage1: $[ dependencies.Stage1.outputs['JobA.SetOutputVar.myVar'] ]
+    steps:
+    - script: |
+        echo "The value of the variable from Stage1 JobA is: $(myVarFromStage1)"
+      displayName: 'Print Variable from Stage1 JobA'
