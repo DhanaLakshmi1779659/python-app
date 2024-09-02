@@ -14,23 +14,31 @@ steps:
 - script: |
     echo "Checking the status of the pipeline every 5 minutes..."
     while true; do
-      echo "Fetching the latest run status of pipeline ID: $(pipelineId)"
-      response=$(curl -s \
-        -u ":$(System.AccessToken)" \
-        -H "Content-Type: application/json" \
-        "https://dev.azure.com/$(azureDevOpsOrg)/$(projectName)/_apis/pipelines/$(pipelineId)/runs?api-version=6.0")
+==========
 
-      latestRunStatus=$(echo $response | jq -r '.value[0].state')
-      echo "Latest run status: $latestRunStatus"
+trigger:
+- main
 
-      if [[ "$latestRunStatus" == "completed" ]]; then
-        echo "The pipeline run has completed."
-        break
-      else
-        echo "The pipeline run is still in progress. Sleeping for $(sleepTime) seconds."
-        sleep $(sleepTime)
-      fi
-    done
-  env:
-    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-  displayName: "Check Pipeline Status"
+stages:
+- stage: Stage1
+  jobs:
+  - job: JobA
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        echo "##vso[task.setvariable variable=myVar;isOutput=true]Hello from Stage1 JobA"
+      name: SetOutputVar
+
+- stage: Stage2
+  dependsOn: Stage1
+  jobs:
+  - job: JobB
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      myVarFromStage1: $[ dependencies.Stage1.outputs['JobA.SetOutputVar.myVar'] ]
+    steps:
+    - script: |
+        echo "The value of the variable from Stage1 JobA is: $(myVarFromStage1)"
+      displayName: 'Print Variable from Stage1 JobA'
