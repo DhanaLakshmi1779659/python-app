@@ -5,7 +5,7 @@ stages:
   jobs:
   - job: A
     steps:
-    - bash: |
+    - script: |
        echo "##vso[task.setvariable variable=skipsubsequent;isOutput=true]true"
       name: skipstep
 
@@ -16,9 +16,6 @@ stages:
       - name: skipMe
         value: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
     steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: |
+    - script: |
           echo 'Hello inline version'
           echo $(skipMe) 
