@@ -10,7 +10,6 @@ stages:
   jobs:
   - job: Job0
     displayName: "Job 0"
-    condition: and(succeeded(), eq(variables['stageVariable'], 0))  # Runs only if stageVariable is 0
     steps:
     - script: |
         echo "Running Job 0"
@@ -37,7 +36,6 @@ stages:
 
   - job: Job3
     displayName: "Job 3"
-    dependsOn: Job2
     condition: and(succeeded(), or(eq(variables['stageVariable'], 0), eq(variables['stageVariable'], 1), eq(variables['stageVariable'], 2), eq(variables['stageVariable'], 3)))  # Runs if stageVariable is 1, 2, or 3
     steps:
     - script: |
