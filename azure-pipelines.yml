@@ -13,8 +13,7 @@ stages:
   jobs:
   - job: B
     variables:
-      - name: skipMe
-        value: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
+      skipMe: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
     steps:
     - script: |
           echo 'Hello inline version'
