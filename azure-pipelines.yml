@@ -12,22 +12,32 @@ stages:
     displayName: "Job 0"
     condition: and(succeeded(), eq(variables['stageVariable'], 0))  # Runs only if stageVariable is 0
     steps:
-    - script: echo "Running Job 0"
+    - script: |
+        echo "Running Job 0"
+        stageVariable=1
+        echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
   
   - job: Job1
     displayName: "Job 1"
     condition: and(succeeded(), eq(variables['stageVariable'], 1))  # Runs only if stageVariable is 1
     steps:
-    - script: echo "Running Job 1"
+    - script: |
+        echo "Running Job 1"
+        stageVariable=2
+        echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
 
   - job: Job2
     displayName: "Job 2"
     condition: and(succeeded(), ge(variables['stageVariable'], 2))  # Runs if stageVariable is 2 or greater
     steps:
-    - script: echo "Running Job 2"
+    - script: |
+        echo "Running Job 2"
+        stageVariable=3
+        echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
 
   - job: Job3
     displayName: "Job 3"
     condition: and(succeeded(), ge(variables['stageVariable'], 3))  # Runs if stageVariable is 3 or greater
     steps:
-    - script: echo "Running Job 3"
+    - script: |
+        echo "Running Job 3"
