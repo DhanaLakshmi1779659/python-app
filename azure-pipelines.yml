@@ -5,10 +5,6 @@ stages:
   jobs:
   - job: A
     steps:
-    - task: Bash@3
-      inputs:
-          filePath: 'script-a.sh'
-      name: setvar
     - bash: |
        echo "##vso[task.setvariable variable=skipsubsequent;isOutput=true]true"
       name: skipstep
@@ -17,22 +13,12 @@ stages:
   jobs:
   - job: B
     variables:
-      - name: StageSauce
-        value: $[ stageDependencies.one.A.outputs['setvar.sauce'] ]
       - name: skipMe
         value: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
     steps:
-    - task: Bash@3
-      inputs:
-        filePath: 'script-b.sh'
-      name: fileversion
-      env:
-        StageSauce: $(StageSauce) # predefined in variables section
-        skipMe: $(skipMe) # predefined in variables section
     - task: Bash@3
       inputs:
         targetType: 'inline'
         script: |
           echo 'Hello inline version'
           echo $(skipMe) 
-          echo $(StageSauce)
