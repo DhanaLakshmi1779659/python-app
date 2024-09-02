@@ -12,7 +12,7 @@ stages:
   jobs:
   - job: DeployJob
     variables:
-      myVarFromBuild: $[ dependencies.Build.jobs.BuildJob.outputs['SetVarStep.myVar'] ]
+      myVarFromBuild: $[ dependencies.Build.outputs['BuildJob.SetVarStep.myVar'] ]
     steps:
     - script: |
         echo "The value of the variable is: $(myVarFromBuild)"
