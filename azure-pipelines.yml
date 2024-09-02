@@ -1,37 +1,33 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
-
-jobs:
-- job: Job1
-  displayName: 'Job 1: Set Variable'
-  steps:
-  - script: |
-      resource="Kubernetes_Cluster"
-      echo "resource = $resource"
-      echo "##vso[task.setVariable variable=resource_type;isOutput=true]$resource"
-    name: SetVariableStep
-
-- job: Job2
-  displayName: 'Job 2: Use Variable'
-  dependsOn: Job1
+stages:
+- stage: ExampleStage
+  displayName: "Example Stage"
   variables:
-    resourceType: $[ dependencies.Job1.outputs['SetVariableStep.resource_type'] ]
-  steps:
-  - script: |
-      echo "The value of resource_type from Job 1 is: $(resourceType)"
-    displayName: "Step 1"
-    name: "step_1"
-    condition: eq(variables['resourceType'], 'Kubernetes_Cluster')
-  - script: |
-      echo "The value of resource_type from Job 1 is: $(resourceType)"
-    displayName: "Step 2"
-    name: "step_2"
-    condition: ne(variables['resourceType'], 'Kubernetes_Cluster')
-  - script: |
-      echo "The value of resource_type from Job 1 is: $(resourceType)"
-    displayName: "Step 3"
-    name: "step_3"
-    condition: ne(variables['resourceType'], 'Kubernetes_Cluster')      
+    stageVariable: 1  # Set your stage variable value here
+
+  jobs:
+  - job: Job0
+    displayName: "Job 0"
+    condition: and(succeeded(), eq(variables['stageVariable'], 0))  # Runs only if stageVariable is 0
+    steps:
+    - script: echo "Running Job 0"
+  
+  - job: Job1
+    displayName: "Job 1"
+    condition: and(succeeded(), eq(variables['stageVariable'], 1))  # Runs only if stageVariable is 1
+    steps:
+    - script: echo "Running Job 1"
+
+  - job: Job2
+    displayName: "Job 2"
+    condition: and(succeeded(), ge(variables['stageVariable'], 2))  # Runs if stageVariable is 2 or greater
+    steps:
+    - script: echo "Running Job 2"
+
+  - job: Job3
+    displayName: "Job 3"
+    condition: and(succeeded(), ge(variables['stageVariable'], 3))  # Runs if stageVariable is 3 or greater
+    steps:
+    - script: echo "Running Job 3"
