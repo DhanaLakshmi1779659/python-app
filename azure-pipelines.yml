@@ -1,26 +1,38 @@
-trigger:
-- main
-
+## azure-pipelines.yml
 stages:
-- stage: Stage1
-  jobs:
-  - job: JobA
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - script: |
-        echo "##vso[task.setvariable variable=myVar;isOutput=true]Hello from Stage1 JobA"
-      name: SetOutputVar
 
-- stage: Stage2
-  dependsOn: Stage1
+- stage: one
   jobs:
-  - job: JobB
-    pool:
-      vmImage: 'ubuntu-latest'
-    variables:
-      myVarFromStage1: $[ dependencies.Stage1.outputs['JobA.SetOutputVar.myVar'] ]
+  - job: A
     steps:
-    - script: |
-        echo "The value of the variable from Stage1 JobA is: $(myVarFromStage1)"
-      displayName: 'Print Variable from Stage1 JobA'
+    - task: Bash@3
+      inputs:
+          filePath: 'script-a.sh'
+      name: setvar
+    - bash: |
+       echo "##vso[task.setvariable variable=skipsubsequent;isOutput=true]true"
+      name: skipstep
+
+- stage: two
+  jobs:
+  - job: B
+    variables:
+      - name: StageSauce
+        value: $[ stageDependencies.one.A.outputs['setvar.sauce'] ]
+      - name: skipMe
+        value: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
+    steps:
+    - task: Bash@3
+      inputs:
+        filePath: 'script-b.sh'
+      name: fileversion
+      env:
+        StageSauce: $(StageSauce) # predefined in variables section
+        skipMe: $(skipMe) # predefined in variables section
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Hello inline version'
+          echo $(skipMe) 
+          echo $(StageSauce)
