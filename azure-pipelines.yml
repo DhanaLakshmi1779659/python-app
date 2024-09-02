@@ -5,7 +5,7 @@ stages:
 - stage: ExampleStage
   displayName: "Example Stage"
   variables:
-    stageVariable: 3  # Set your stage variable value here
+    stageVariable: 0  # Set your stage variable value here
 
   jobs:
   - job: Job0
