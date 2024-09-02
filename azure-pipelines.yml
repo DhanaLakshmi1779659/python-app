@@ -5,7 +5,7 @@ stages:
 - stage: ExampleStage
   displayName: "Example Stage"
   variables:
-    stageVariable: 2  # Set your stage variable value here
+    stageVariable: 1  # Set your stage variable value here
 
   jobs:
   - job: Job0
@@ -19,7 +19,7 @@ stages:
   
   - job: Job1
     displayName: "Job 1"
-    condition: and(succeeded(), ge(variables['stageVariable'], 1))  # Runs only if stageVariable is 1
+    condition: and(succeeded(), eq(variables['stageVariable'], 1))  # Runs only if stageVariable is 1
     steps:
     - script: |
         echo "Running Job 1"
@@ -28,7 +28,7 @@ stages:
 
   - job: Job2
     displayName: "Job 2"
-    condition: and(succeeded(), ge(variables['stageVariable'], 2))  # Runs if stageVariable is 2 or greater
+    condition: and(succeeded(), or(eq(variables['stageVariable'], 1), eq(variables['stageVariable'], 2)))  # Runs if stageVariable is 1 or 2
     steps:
     - script: |
         echo "Running Job 2"
@@ -37,7 +37,7 @@ stages:
 
   - job: Job3
     displayName: "Job 3"
-    condition: and(succeeded(), ge(variables['stageVariable'], 3))  # Runs if stageVariable is 3 or greater
+    condition: and(succeeded(), or(eq(variables['stageVariable'], 1), eq(variables['stageVariable'], 2), eq(variables['stageVariable'], 3)))  # Runs if stageVariable is 1, 2, or 3
     steps:
     - script: |
         echo "Running Job 3"
