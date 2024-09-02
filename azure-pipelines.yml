@@ -13,7 +13,7 @@ stages:
     steps:
     - script: |
         echo "Running Job 0"
-        stageVariable=1
+        stageVariable=0
         echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
   
   - job: Job1
@@ -22,7 +22,7 @@ stages:
     steps:
     - script: |
         echo "Running Job 1"
-        stageVariable=2
+        stageVariable=1
         echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
 
   - job: Job2
@@ -31,7 +31,7 @@ stages:
     steps:
     - script: |
         echo "Running Job 2"
-        stageVariable=3
+        stageVariable=2
         echo "##vso[task.setvariable variable=stageVariable]$stageVariable"
 
   - job: Job3
