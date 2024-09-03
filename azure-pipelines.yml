@@ -1,20 +1,35 @@
-## azure-pipelines.yml
+trigger:
+- main
+
+variables:
+  status_passed: 0
+
 stages:
-
-- stage: one
+- stage: Stage1
   jobs:
-  - job: A
+  - job: Job1
     steps:
     - script: |
-       echo "##vso[task.setvariable variable=skipsubsequent;isOutput=true]true"
-      name: skipstep
+        echo "##vso[task.setvariable variable=status_passed]$((status_passed + 1))"
+        echo "Stage 1: status_passed=$(status_passed)"
+      displayName: 'Increment and print status_passed in Stage 1'
 
-- stage: two
+- stage: Stage2
+  dependsOn: Stage1
   jobs:
-  - job: B
-    variables:
-      skipMe: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
+  - job: Job2
     steps:
     - script: |
-          echo 'Hello inline version'
-          echo $(skipMe) 
+        echo "##vso[task.setvariable variable=status_passed]$((status_passed + 1))"
+        echo "Stage 2: status_passed=$(status_passed)"
+      displayName: 'Increment and print status_passed in Stage 2'
+
+- stage: Stage3
+  dependsOn: Stage2
+  jobs:
+  - job: Job3
+    steps:
+    - script: |
+        echo "##vso[task.setvariable variable=status_passed]$((status_passed + 1))"
+        echo "Stage 3: status_passed=$(status_passed)"
+      displayName: 'Increment and print status_passed in Stage 3'
