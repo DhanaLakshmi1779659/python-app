@@ -1,44 +1,16 @@
-trigger:
-- main
-
-variables:
-  status_passed: 0
-
 stages:
 - stage: Stage1
   jobs:
   - job: Job1
     steps:
     - script: |
-        status_passed=$((status_passed + 1))
-        echo "##vso[task.setvariable variable=status_passed;isOutput=true]$status_passed"
-        echo "Stage 1: status_passed=$status_passed"
-      name: SetStatusPassed
-      displayName: 'Increment and print status_passed in Stage 1'
+        echo "##vso[task.setvariable variable=skipStage2;isOutput=true]true"
+      name: SetVariable
 
 - stage: Stage2
   dependsOn: Stage1
-  variables:
-    status_passed: $[ dependencies.Stage1.outputs['Job1.SetStatusPassed.status_passed'] ]
+  condition: and(succeeded(), eq(dependencies.Stage1.outputs['Job1.SetVariable.skipStage2'], 'false'))
   jobs:
   - job: Job2
     steps:
-    - script: |
-        status_passed=$((status_passed + 1))
-        echo "##vso[task.setvariable variable=status_passed;isOutput=true]$status_passed"
-        echo "Stage 2: status_passed=$status_passed"
-      name: SetStatusPassed
-      displayName: 'Increment and print status_passed in Stage 2'
-
-- stage: Stage3
-  dependsOn: Stage2
-  variables:
-    status_passed: $[ dependencies.Stage2.outputs['Job2.SetStatusPassed.status_passed'] ]
-  jobs:
-  - job: Job3
-    steps:
-    - script: |
-        status_passed=$((status_passed + 1))
-        echo "##vso[task.setvariable variable=status_passed;isOutput=true]$status_passed"
-        echo "Stage 3: status_passed=$status_passed"
-      displayName: 'Increment and print status_passed in Stage 3'
+    - script: echo "This is Stage 2"
