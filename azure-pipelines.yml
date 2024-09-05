@@ -9,7 +9,7 @@ stages:
 
 - stage: Stage2
   dependsOn: Stage1
-  condition: and(succeeded(), eq(dependencies.Stage1.outputs['Job1.SetVariable.skipStage2'], 'false'))
+  condition: and(succeeded(), eq(dependencies.Stage1.outputs['Job1.SetVariable.skipStage2'], 'true'))
   jobs:
   - job: Job2
     steps:
