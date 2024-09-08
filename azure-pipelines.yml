@@ -1,16 +1,57 @@
-stages:
-- stage: Stage1
-  jobs:
-  - job: Job1
-    steps:
-    - script: |
-        echo "##vso[task.setvariable variable=skipStage2;isOutput=true]true"
-      name: SetVariable
 
-- stage: Stage2
-  dependsOn: Stage1
-  condition: and(succeeded(), eq(dependencies.Stage1.outputs['Job1.SetVariable.skipStage2'], 'true'))
-  jobs:
-  - job: Job2
-    steps:
-    - script: echo "This is Stage 2"
+trigger:
+- main
+
+variables:
+  statusStage1: 0
+  statusStage2: 0
+  statusStage3: 0
+  statusStage4: 0
+
+stages:
+  - stage: Stage1
+    displayName: 'Stage 1'
+    condition: and(succeeded(), eq(variables['statusStage1'], 0)) # Skip if stage already succeeded
+    jobs:
+      - job: Job1
+        steps:
+          - script: |
+              echo "Running Stage 1"
+              echo "Setting status for Stage 1 to 1"
+              echo "##vso[task.setvariable variable=statusStage1]1"
+
+  - stage: Stage2
+    displayName: 'Stage 2'
+    dependsOn: Stage1
+    condition: and(succeeded(), eq(variables['statusStage2'], 0)) # Skip if stage already succeeded
+    jobs:
+      - job: Job2
+        steps:
+          - script: |
+              echo "Running Stage 2"
+              echo "Setting status for Stage 2 to 1"
+              echo "##vso[task.setvariable variable=statusStage2]1"
+
+  - stage: Stage3
+    displayName: 'Stage 3'
+    dependsOn: Stage2
+    condition: and(succeeded(), eq(variables['statusStage3'], 0)) # Skip if stage already succeeded
+    jobs:
+      - job: Job3
+        steps:
+          - script: |
+              echo "Running Stage 3"
+              echo "Setting status for Stage 3 to 1"
+              echo "##vso[task.setvariable variable=statusStage3]1"
+
+  - stage: Stage4
+    displayName: 'Stage 4'
+    dependsOn: Stage3
+    condition: and(succeeded(), eq(variables['statusStage4'], 0)) # Skip if stage already succeeded
+    jobs:
+      - job: Job4
+        steps:
+          - script: |
+              echo "Running Stage 4"
+              echo "Setting status for Stage 4 to 1"
+              echo "##vso[task.setvariable variable=statusStage4]1"
