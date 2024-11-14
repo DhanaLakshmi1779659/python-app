@@ -5,7 +5,7 @@ pool:
 
 variables:
   - name: environment
-    value: 'development' # Change this value to 'production' for production environment
+    value: 'production' # Change this value to 'production' for production environment
 
   - name: ServiceAccount
     ${{ if eq(variables['environment'], 'development') }}:
