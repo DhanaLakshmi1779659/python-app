@@ -1,58 +1,19 @@
-
 trigger:
 - main
+pool: 
+  vmImage: 'ubuntu-latest'
 
 variables:
-  statusStage1: 0
-  statusStage2: 0
-  statusStage3: 0
-  statusStage4: 0
+  - name: environment
+    value: 'development' # Change this value to 'production' for production environment
 
-stages:
-  - stage: Stage1
-    displayName: 'Stage 1'
-    condition: and(succeeded(), eq(variables['statusStage1'], 0)) # Skip if stage already succeeded
-    jobs:
-      - job: Job1
-        steps:
-          - script: |
-              echo "Running Stage 1"
-              echo "Setting status for Stage 1 to 1"
-              echo "##vso[task.setvariable variable=statusStage1]1"
+  - name: ServiceAccount
+    ${{ if eq(variables['environment'], 'development') }}:
+      value: 'DevelopmentPool'
+    ${{ if eq(variables['environment'], 'production') }}:
+      value: 'ProductionPool'
 
-  - stage: Stage2
-    displayName: 'Stage 2'
-    dependsOn: Stage1
-    condition: and(succeeded(), eq(variables['statusStage2'], 0)) # Skip if stage already succeeded
-    jobs:
-      - job: Job2
-        steps:
-          - script: |
-              echo "Running Stage 2"
-              echo "Setting status for Stage 2 to 1"
-              echo "##vso[task.setvariable variable=statusStage2]1"
 
-  - stage: Stage3
-    displayName: 'Stage 3'
-    dependsOn: Stage2
-    condition: and(succeeded(), eq(variables['statusStage3'], 0)) # Skip if stage already succeeded
-    jobs:
-      - job: Job3
-        steps:
-          - script: |
-              echo "Running Stage 3"
-              echo "Setting status for Stage 3 to 1"
-              exit 1
-              echo "##vso[task.setvariable variable=statusStage3]1"
 
-  - stage: Stage4
-    displayName: 'Stage 4'
-    dependsOn: Stage3
-    condition: and(succeeded(), eq(variables['statusStage4'], 0)) # Skip if stage already succeeded
-    jobs:
-      - job: Job4
-        steps:
-          - script: |
-              echo "Running Stage 4"
-              echo "Setting status for Stage 4 to 1"
-              echo "##vso[task.setvariable variable=statusStage4]1"
+steps:
+- script: echo "Building in the $(environment) environment using the $(poolName) pool."
