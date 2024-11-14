@@ -16,4 +16,4 @@ variables:
 
 
 steps:
-- script: echo "Building in the $(environment) and $(ServiceAccount) environment using the $(poolName) pool."
+- script: echo "Building in the $(environment) and  environment using the $(ServiceAccount) pool."
